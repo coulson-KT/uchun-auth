@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>有春 授權</title>
+<!-- 有春 Uchun MCP 的 OAuth 同意頁（Supabase OAuth Server 的 authorization path）。規格：coulson-KT/uchun docs/SPEC_MCP_v1_AI接口.md。2026-10-31 起用有春自己的 Supabase 專案，不再和 MOUii 共用。 -->
+<style>
+  :root { --ink: #1d1b19; --orange: #e8590c; --muted: #6b6560; --bg: #ffffff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; }
+  main { max-width: 420px; margin: 0 auto; padding: 48px 16px; }
+  .brand { font-weight: 900; font-size: 28px; letter-spacing: .08em; }
+  .brand small { font-weight: 700; font-size: 14px; letter-spacing: .02em; color: var(--orange); margin-left: 6px; }
+  .card { border: 2px solid var(--ink); border-radius: 4px; padding: 20px; margin-top: 24px; }
+  h1 { font-size: 20px; margin: 0 0 8px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--muted); font-size: 14px; }
+  ul { padding-left: 20px; margin: 8px 0; }
+  .actions { display: flex; gap: 12px; margin-top: 20px; }
+  button { flex: 1; font: inherit; font-weight: 700; padding: 12px; border-radius: 4px; border: 2px solid var(--ink); background: var(--bg); color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--ink); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  .error { color: var(--orange); font-weight: 600; }
+  footer { margin-top: 32px; font-size: 13px; color: var(--muted); }
+  footer a { color: inherit; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">有春<small>Uchun</small></div>
+  <p class="muted">先把該留的錢安排好，剩下的是你的。</p>
+
+  <section class="card" id="loading"><p>讀取中…</p></section>
+
+  <section class="card" id="login" hidden>
+    <h1>先登入有春</h1>
+    <p>有 AI 想連到你的有春。請用你在 App 裡使用的帳號登入。</p>
+    <div class="actions">
+      <button class="primary" id="apple">用 Apple 登入</button>
+      <button id="google">用 Google 登入</button>
+    </div>
+  </section>
+
+  <section class="card" id="consent" hidden>
+    <h1><span id="client"></span> 想連到你的有春</h1>
+    <p>允許後，它可以做和你在 App 裡一樣的事：</p>
+    <ul>
+      <li>看每筆收入怎麼分、應付款備好了沒、願望存到哪裡</li>
+      <li>新增或修改收入、項目、帳戶；記已入帳、勾已留好；記額外收入</li>
+    </ul>
+    <p class="muted">它不能清空帳本、載入示範資料或匯入備份。帳號：<span id="email"></span></p>
+    <div class="actions">
+      <button id="deny">拒絕</button>
+      <button class="primary" id="approve">允許</button>
+    </div>
+  </section>
+
+  <section class="card" id="failed" hidden>
+    <h1>沒辦法完成授權</h1>
+    <p class="error" id="message"></p>
+  </section>
+
+  <footer>隨時可以在有春 App 的「設定 → 雲端與 AI」登出或刪除帳號，已授權的 AI 連線會一起失效。<a href="../../privacy/">隱私政策</a></footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://cluhuvybsjowlsmdomez.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_0ptpb9gDxaNFlpc1w2U7hg_pGPkBTc1' // 公開金鑰，與 App 相同；權限由 RLS 控制
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'pkce', detectSessionInUrl: true } })
+  const authorizationID = new URLSearchParams(location.search).get('authorization_id')
+  const $ = (id) => document.getElementById(id)
+
+  function show(id) {
+    for (const section of ['loading', 'login', 'consent', 'failed']) $(section).hidden = section !== id
+  }
+  function fail(message) {
+    $('message').textContent = message
+    show('failed')
+  }
+
+  async function start() {
+    if (!authorizationID) return fail('網址缺少授權編號，請從 AI 那邊重新開始連線。')
+    const { data: { session } } = await client.auth.getSession()
+    if (!session) return show('login') // 登入完會回到這一頁（redirectTo 保留 authorization_id）
+    const { data, error } = await client.auth.oauth.getAuthorizationDetails(authorizationID)
+    if (error) return fail(error.message)
+    if (data.redirect_url && !data.client) return location.assign(data.redirect_url) // 先前已同意過
+    $('client').textContent = data.client?.name || '一個 AI 工具'
+    $('email').textContent = session.user.email || session.user.id
+    show('consent')
+  }
+
+  async function decide(approve) {
+    $('approve').disabled = $('deny').disabled = true
+    const { data, error } = approve
+      ? await client.auth.oauth.approveAuthorization(authorizationID)
+      : await client.auth.oauth.denyAuthorization(authorizationID)
+    if (error) return fail(error.message)
+    location.assign(data.redirect_url)
+  }
+
+  const redirectTo = location.origin + location.pathname + '?authorization_id=' + encodeURIComponent(authorizationID)
+  $('google').onclick = () => client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } })
+  // 網頁版 Apple 登入需要 Services ID 與金鑰（Supabase Apple provider 的 secret）；還沒設定前按下去會由 Supabase 回錯誤訊息
+  $('apple').onclick = () => client.auth.signInWithOAuth({ provider: 'apple', options: { redirectTo } })
+  $('approve').onclick = () => decide(true)
+  $('deny').onclick = () => decide(false)
+  start().catch((e) => fail(e.message || String(e)))
+</script>
+</body>
+</html>

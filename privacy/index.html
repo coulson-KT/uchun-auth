@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>有春 Uchun 隱私政策</title>
+<style>
+  :root { --ink: #1d1b19; --orange: #e8590c; --muted: #6b6560; --bg: #ffffff; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.7 -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 48px 20px 80px; }
+  .brand { font-weight: 900; font-size: 28px; letter-spacing: .08em; }
+  .brand small { font-weight: 700; font-size: 14px; color: var(--orange); margin-left: 6px; }
+  h1 { font-size: 24px; margin: 24px 0 4px; }
+  h2 { font-size: 18px; margin: 28px 0 8px; padding-top: 12px; border-top: 2px solid var(--ink); }
+  .muted { color: var(--muted); font-size: 14px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border: 1px solid #d9d4cf; }
+  th { background: #f6f3ef; }
+  code { font-size: 14px; background: #f6f3ef; padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">有春<small>Uchun</small></div>
+  <h1>隱私政策</h1>
+  <p class="muted">版本：2026-10-31（草稿，正式上架前由 Coulson 定稿）。適用於 iPhone 與 Mac 的「有春 Uchun」App、有春的 AI 接口（MCP）與這個網站。</p>
+
+  <h2>一句話</h2>
+  <p>有春只在你登入雲端同步時，把你的帳本存到我們的伺服器；不登入，資料只在你的裝置上。我們不賣資料、不放廣告、不追蹤你。</p>
+
+  <h2>我們收集什麼</h2>
+  <table>
+    <tr><th>資料</th><th>什麼時候</th><th>用來做什麼</th></tr>
+    <tr><td>帳本內容：收入名稱與金額、每月要付與要存的項目、已留好的紀錄、帳戶名稱與銀行標籤</td><td>你在 App 裡輸入</td><td>算每次發薪該留多少、應付款備好了沒。不登入時只存在你的裝置</td></tr>
+    <tr><td>登入帳號的電子郵件與帳號識別碼</td><td>你選擇「用 Apple 登入」或「用 Google 登入」</td><td>辨認是你的帳本，讓 Mac 與 iPhone 同步、讓你授權的 AI 讀寫</td></tr>
+    <tr><td>伺服器紀錄：請求狀態碼與耗時</td><td>使用雲端同步或 AI 接口</td><td>排錯。不記金額、不記項目名稱、不記電子郵件</td></tr>
+  </table>
+  <p>我們不收集：位置、通訊錄、照片、廣告識別碼、瀏覽行為。有春不串接銀行、不讀取任何金融帳戶。</p>
+
+  <h2>資料放在哪裡</h2>
+  <ul>
+    <li><strong>你的裝置</strong>：帳本存在 App 自己的資料夾，受 iOS／macOS 的裝置加密保護，並會跟著你的 iCloud 或電腦備份。</li>
+    <li><strong>雲端（登入後）</strong>：存在 Supabase 位於日本東京（AWS ap-northeast-1）的資料庫，傳輸全程 HTTPS。每個人只能讀寫自己的那一份（資料庫列級權限）。</li>
+    <li><strong>備份檔</strong>：你用「匯出備份」產生的 JSON 是明文，存放位置由你決定，請自行保管。</li>
+  </ul>
+
+  <h2>AI 接口（MCP）</h2>
+  <p>你可以把有春連到 ChatGPT、Claude 等 AI 工具。連線時會先到我們的同意頁登入並按「允許」；之後該工具能做的事和你在 App 裡一樣，但不能清空帳本、載入示範資料或匯入備份。你隨時可以在 App「設定 → 雲端與 AI」登出或刪除帳號，已授權的連線會一起失效。你和 AI 工具之間的對話由該工具的服務商處理，不在本政策範圍。</p>
+
+  <h2>第三方服務</h2>
+  <ul>
+    <li><strong>Supabase</strong>（資料庫、登入、伺服器函式）：<a href="https://supabase.com/privacy">supabase.com/privacy</a></li>
+    <li><strong>Apple 登入／Google 登入</strong>：只用來取得你的電子郵件與帳號識別碼；Apple 的「隱藏我的電子郵件」可以正常使用。</li>
+  </ul>
+
+  <h2>保留多久、怎麼刪除</h2>
+  <ul>
+    <li>在 App「設定 → 雲端與 AI → 刪除帳號與雲端資料」可以立刻永久刪除雲端帳本、登入帳號與所有 AI 授權；這台裝置上的資料會保留，可在「試玩 → 清空重新開始」清掉。</li>
+    <li>不登入的資料只在你的裝置上，刪除 App 就一併刪除。</li>
+    <li>伺服器紀錄最多保留 30 天。</li>
+  </ul>
+
+  <h2>兒童</h2>
+  <p>有春不是為 13 歲以下兒童設計，我們不會刻意收集兒童的資料。</p>
+
+  <h2>變更與聯絡</h2>
+  <p>政策有變更會更新這一頁的版本日期。有任何問題，請來信 <code>（上架前填入聯絡信箱）</code>。</p>
+</main>
+</body>
+</html>
