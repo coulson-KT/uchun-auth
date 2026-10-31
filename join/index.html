@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加入家庭・有春 Uchun</title>
+<style>
+  :root { --ink: #1A1C1C; --orange: #FF6914; }
+  body { margin: 0; background: #fff; color: var(--ink); font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
+  main { max-width: 520px; margin: 0 auto; padding: 48px 24px; }
+  .brand { color: var(--orange); font-weight: 800; letter-spacing: .08em; font-size: 14px; }
+  h1 { font-size: 30px; font-weight: 900; margin: 12px 0 8px; line-height: 1.25; }
+  p { color: #555; line-height: 1.6; }
+  .box { border: 2px solid var(--ink); border-radius: 4px; padding: 16px; margin: 20px 0; }
+  .name { font-size: 22px; font-weight: 800; }
+  a.btn { display: block; text-align: center; background: var(--ink); color: #fff; text-decoration: none; font-weight: 800; padding: 14px; border-radius: 4px; margin-top: 16px; }
+  .small { font-size: 13px; color: #777; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; word-break: break-all; }
+  .bad { color: var(--orange); font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">有春 Uchun</div>
+  <h1 id="title">家人邀請你加入家庭帳本</h1>
+  <p id="sub">確認是這一家，再用有春 App 輸入家庭密碼就能加入。</p>
+  <div class="box">
+    <div class="small">家庭名稱</div>
+    <div class="name" id="family">查詢中…</div>
+    <a class="btn" id="open" href="#">打開有春加入</a>
+  </div>
+  <p class="small">還沒有有春？先在 Mac 或 iPhone 安裝有春，再回來點上面的按鈕；或把這一頁的網址貼進有春的「家人給了我連結」。</p>
+  <p class="small">網址：<code id="url"></code></p>
+</main>
+<script>
+(async () => {
+  // 只查家庭名稱；這把 key 是公開的 publishable key，權限由資料庫的 RLS 與函式控制
+  const SUPABASE = 'https://cluhuvybsjowlsmdomez.supabase.co';
+  const KEY = 'sb_publishable_0ptpb9gDxaNFlpc1w2U7hg_pGPkBTc1';
+  const t = new URLSearchParams(location.search).get('t') || '';
+  document.getElementById('url').textContent = location.href;
+  const open = document.getElementById('open');
+  const fam = document.getElementById('family');
+  if (!t) { fam.textContent = '這個連結少了邀請碼'; fam.className = 'name bad'; open.style.display = 'none'; return; }
+  open.href = 'uchun://join?t=' + encodeURIComponent(t);
+  try {
+    const r = await fetch(SUPABASE + '/rest/v1/rpc/uchun_invite_info', {
+      method: 'POST', headers: { 'content-type': 'application/json', apikey: KEY, authorization: 'Bearer ' + KEY },
+      body: JSON.stringify({ p_token: t }),
+    });
+    const rows = r.ok ? await r.json() : [];
+    if (rows.length) { fam.textContent = rows[0].family_name; }
+    else { fam.textContent = '連結無效或已經換新，請向當家的要新的連結'; fam.className = 'name bad'; open.style.display = 'none'; }
+  } catch (e) { fam.textContent = '暫時查不到，稍後再試'; fam.className = 'name bad'; }
+})();
+</script>
+</body>
+</html>
