@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>加入家庭・有春 Uchun</title>
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <style>
-  :root { --ink: #1A1C1C; --orange: #FF6914; }
+  :root { --ink: #1A1C1C; --pink: #E4007F; }  /* 品牌色：黑 K100、桃紅 M100（設計規範） */
   body { margin: 0; background: #fff; color: var(--ink); font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
   main { max-width: 520px; margin: 0 auto; padding: 48px 24px; }
-  .brand { color: var(--orange); font-weight: 800; letter-spacing: .08em; font-size: 14px; }
+  .brand img { height: 44px; width: auto; display: block; }
   h1 { font-size: 30px; font-weight: 900; margin: 12px 0 8px; line-height: 1.25; }
   p { color: #555; line-height: 1.6; }
   .box { border: 2px solid var(--ink); border-radius: 4px; padding: 16px; margin: 20px 0; }
@@ -16,12 +18,12 @@
   a.btn { display: block; text-align: center; background: var(--ink); color: #fff; text-decoration: none; font-weight: 800; padding: 14px; border-radius: 4px; margin-top: 16px; }
   .small { font-size: 13px; color: #777; }
   code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; word-break: break-all; }
-  .bad { color: var(--orange); font-weight: 700; }
+  .bad { color: var(--pink); font-weight: 700; }
 </style>
 </head>
 <body>
 <main>
-  <div class="brand">有春 Uchun</div>
+  <div class="brand"><img src="../assets/logo-wide.png" alt="有春 Uchun"></div>
   <h1 id="title">家人邀請你加入家庭帳本</h1>
   <p id="sub">確認是這一家，再用有春 App 輸入家庭密碼就能加入。</p>
   <div class="box">
